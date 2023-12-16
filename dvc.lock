@@ -9,8 +9,8 @@ stages:
       size: 14397
     - path: src/train.py
       hash: md5
-      md5: 409aa856f37b90b37f1cb06e0afb1ac4
-      size: 3386
+      md5: 14cb5c6cbfc8ef51f1b15857406e473f
+      size: 3366
     params:
       params.yaml:
         base:
@@ -32,12 +32,12 @@ stages:
     outs:
     - path: dvclive/metrics.json
       hash: md5
-      md5: 92662680a9ee40b337555b7615c88a22
+      md5: a6cc5476b6bc7f697dc42042351209b2
       size: 361
     - path: dvclive/plots
       hash: md5
-      md5: 0d3e48fc8386c22fe6dcbc3e79940588.dir
-      size: 3338
+      md5: 3824e89792f4377b1b086e9ab3bd3211.dir
+      size: 3342
       nfiles: 7
     - path: plots
       hash: md5
