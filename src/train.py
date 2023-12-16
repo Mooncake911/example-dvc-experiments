@@ -1,4 +1,5 @@
 import os
+
 # Set tensorflow logging to minimum
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # or any {'0', '1', '2'}
 import imageio
@@ -72,7 +73,7 @@ def main():
     x_valid = testing_images
     y_train = training_labels
     y_valid = testing_labels
-    
+
     m.fit(
         x_train,
         y_train,
@@ -94,15 +95,15 @@ def main():
         f.write("actual,predicted\n")
         sx = y_valid.shape[0]
         for i in range(sx):
-            actual=y_valid[i].argmax()
-            predicted=y_pred[i]
+            actual = y_valid[i].argmax()
+            predicted = y_pred[i]
             f.write(f"{actual},{predicted}\n")
             misclassified[(actual, predicted)] = x_valid[i]
-
 
     # find misclassified examples and generate a confusion table image
     confusion_out = create_image_matrix(misclassified)
     imageio.imwrite("plots/confusion.png", confusion_out)
+
 
 if __name__ == "__main__":
     main()

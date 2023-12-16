@@ -5,10 +5,12 @@ import tarfile
 from imageio import imread
 from ruamel.yaml import YAML
 
+
 def label_from_path(filepath):
     """extracts "test", and 3 from a path like "images/test/3/00177.png" """
     elements = filepath.split('/')
     return (elements[1], int(elements[2]))
+
 
 def read_dataset(dataset_path):
     """Reads the dataset from the specified tar.gz file and returns 4-tuple of
@@ -64,12 +66,12 @@ def create_image_matrix(cells):
 
     # out_matrix contains examples in the axes
 
-    out_matrix = np.ones(shape=((max_i+2) * frame_size, (max_j+2) * frame_size, 3), dtype="uint8") * 240
+    out_matrix = np.ones(shape=((max_i + 2) * frame_size, (max_j + 2) * frame_size, 3), dtype="uint8") * 240
     print(f"out_matrix: {out_matrix.shape}")
 
     ## put axis labels
 
-    for i in range(max_i+1):
+    for i in range(max_i + 1):
         if (i, i) in cells:
             image = cells[(i, i)]
             xs = (i + 1) * frame_size + 1
@@ -87,7 +89,7 @@ def create_image_matrix(cells):
         xe = (i + 2) * frame_size - 1
         ys = (j + 1) * frame_size + 1
         ye = (j + 2) * frame_size - 1
-        assert (xe-xs, ye-ys) == image_shape
+        assert (xe - xs, ye - ys) == image_shape
         print((i, j, xs, xe, ys, ye))
         print(out_matrix[xs:xe, ys:ye, :].shape)
         ## I'm sure there is an easier way to broadcast but I'll find it later
@@ -107,9 +109,9 @@ def get_images_from_directory(directory):
         if os.path.splitext(f)[1] in image_file_extensions:
             current_img = imread(os.path.join(directory, f))
             if (
-                len(current_img.shape) != 2
-                or current_img.shape[0] != shape_0
-                or current_img.shape[1] != shape_1
+                    len(current_img.shape) != 2
+                    or current_img.shape[0] != shape_0
+                    or current_img.shape[1] != shape_1
             ):
                 raise Exception("Works with 28x28 grayscale images")
             images.append(current_img)
