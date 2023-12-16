@@ -9,8 +9,8 @@ stages:
       size: 14397
     - path: src/train.py
       hash: md5
-      md5: bbecad00695f8effd533e60e6e291221
-      size: 3129
+      md5: 409aa856f37b90b37f1cb06e0afb1ac4
+      size: 3386
     params:
       params.yaml:
         base:
@@ -20,26 +20,29 @@ stages:
         featurize:
           features_path: data/processed/featured_iris.csv
           target_column: target
-        train:
-          batch_size: 32
-          epochs: 10
+        model:
+          optimizer: Adam
+          loss:
           metrics:
           - accuracy
           - mae
+        train:
+          batch_size: 32
+          epochs: 10
     outs:
     - path: dvclive/metrics.json
       hash: md5
-      md5: 1f4dbed07f3f6a07fcebb2a7a258de41
-      size: 244
+      md5: 92662680a9ee40b337555b7615c88a22
+      size: 361
     - path: dvclive/plots
       hash: md5
-      md5: 7a13bbb01202798ea6dafb96dafc3f13.dir
-      size: 2808
-      nfiles: 5
+      md5: 0d3e48fc8386c22fe6dcbc3e79940588.dir
+      size: 3338
+      nfiles: 7
     - path: plots
       hash: md5
-      md5: 85ca0d932f976df4408b3532e107c5dc.dir
-      size: 12117
+      md5: 42e5f1e4a521092f5fbd8e81ad8e4353.dir
+      size: 12095
       nfiles: 2
   data_load:
     cmd: python src/data_load.py --config=params.yaml

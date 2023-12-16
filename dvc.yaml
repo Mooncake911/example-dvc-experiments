@@ -45,6 +45,7 @@ stages:
     - data_split.test_size
     - featurize
     - train
+    - model
     metrics:
     - dvclive/metrics.json:
         cache: false
@@ -53,3 +54,16 @@ stages:
         cache: false
     - plots:
         cache: false
+
+metrics:
+- dvclive/metrics.json
+plots:
+- dvclive/plots/metrics:
+    x: step
+- dvclive/plots/sklearn/cm.json:
+    template: confusion
+    x: actual
+    y: predicted
+    title: Confusion Matrix
+    x_label: True Label
+    y_label: Predicted Label

@@ -1,6 +1,5 @@
 import os
 import argparse
-import numpy as np
 import pandas as pd
 from typing import Text
 import yaml
@@ -26,17 +25,17 @@ def draw_confusion_matrix(y_test, y_pred):
     plt.savefig('plots/confusion_matrix.png')
 
 
-def get_model():
+def get_model(optimizer, loss, metrics):
+
     model = tf.keras.Sequential([
         tf.keras.layers.Dense(128, activation='relu'),
         tf.keras.layers.Dense(64, activation='relu'),
-        tf.keras.layers.Dense(3, activation='softmax')
+        tf.keras.layers.Dense(3)
     ])
 
-    loss = tf.losses.SparseCategoricalCrossentropy(from_logits=True)
-    metrics = [tf.keras.metrics.CategoricalAccuracy(name="acc")]
-    optimizer = tf.optimizers.SGD(learning_rate=0.01)
-
+    optimizer = optimizer if optimizer is not None else 'adam'
+    loss = loss if loss is not None else tf.losses.SparseCategoricalCrossentropy(from_logits=True)
+    metrics = metrics if metrics is not None else ['accuracy', 'mae']
     model.compile(
         optimizer=optimizer,
         loss=loss,
@@ -56,7 +55,9 @@ def train(config_path: Text) -> None:
         config = yaml.safe_load(conf_file)
 
     # Определяем модель
-    m = get_model()
+    m = get_model(optimizer=config['model']['optimizer'],
+                  loss=config['model']['loss'],
+                  metrics=config['model']['metrics'])
 
     # Подготавливаем данные
     train_df = pd.read_csv(config['featurize']['features_path'])
@@ -83,9 +84,10 @@ def train(config_path: Text) -> None:
             callbacks=[DVCLiveCallback(live=live)],
         )
 
-        test_loss, test_acc = m.evaluate(x_test)
+        test_loss, test_acc, test_mae = m.evaluate(x_test)
         live.log_metric("test_loss", test_loss, plot=False)
         live.log_metric("test_acc", test_acc, plot=False)
+        live.log_metric("test_mae", test_acc, plot=False)
 
         y_prob = m.predict(x_test)
         y_pred = y_prob.argmax(axis=-1)

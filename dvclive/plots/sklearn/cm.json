@@ -1,7 +1,7 @@
 [
     {
         "actual": "1",
-        "predicted": "2"
+        "predicted": "1"
     },
     {
         "actual": "0",
@@ -17,7 +17,7 @@
     },
     {
         "actual": "1",
-        "predicted": "2"
+        "predicted": "1"
     },
     {
         "actual": "0",
@@ -73,7 +73,7 @@
     },
     {
         "actual": "1",
-        "predicted": "2"
+        "predicted": "1"
     },
     {
         "actual": "2",

@@ -21,6 +21,11 @@ data_split:
 train:
   batch_size: 32
   epochs: 10
+
+
+model:
+  optimizer: Adam
+  loss:
   metrics: ['accuracy', 'mae']
 
 
