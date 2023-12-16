@@ -1,5 +1,6 @@
 import os
 import argparse
+import numpy as np
 import pandas as pd
 from typing import Text
 import yaml
@@ -12,6 +13,7 @@ from sklearn.metrics import confusion_matrix
 import seaborn as sns
 
 from dvclive import Live
+from dvclive.keras import DVCLiveCallback
 
 
 def draw_confusion_matrix(y_test, y_pred):
@@ -28,7 +30,7 @@ def get_model():
     model = tf.keras.Sequential([
         tf.keras.layers.Dense(128, activation='relu'),
         tf.keras.layers.Dense(64, activation='relu'),
-        tf.keras.layers.Dense(3)
+        tf.keras.layers.Dense(3, activation='softmax')
     ])
 
     loss = tf.losses.SparseCategoricalCrossentropy(from_logits=True)
@@ -38,7 +40,7 @@ def get_model():
     model.compile(
         optimizer=optimizer,
         loss=loss,
-        metrics=metrics,
+        metrics=metrics
     )
 
     return model
@@ -70,30 +72,36 @@ def train(config_path: Text) -> None:
     epochs = config['train']['epochs']
 
     # Вычисляем модель
-    m.fit(
-        x_train,
-        y_train,
-        batch_size=batch_size,
-        epochs=epochs,
-        verbose=1,
-        validation_data=(x_test, y_test),
-    )
+    with Live() as live:
+        m.fit(
+            x_train,
+            y_train,
+            batch_size=batch_size,
+            epochs=epochs,
+            verbose=1,
+            validation_data=(x_test, y_test),
+            callbacks=[DVCLiveCallback(live=live)],
+        )
 
-    # Вывод
-    y_prob = m.predict(x_test)
-    y_pred = y_prob.argmax(axis=-1)
+        test_loss, test_acc = m.evaluate(x_test)
+        live.log_metric("test_loss", test_loss, plot=False)
+        live.log_metric("test_acc", test_acc, plot=False)
 
-    df = pd.DataFrame({
-        'actual': y_test,
-        'predicted': y_pred,
-    })
-    os.makedirs("plots")
-    df.to_csv('plots/confusion.csv', index=False)
-    draw_confusion_matrix(y_test, y_pred)
+        y_prob = m.predict(x_test)
+        y_pred = y_prob.argmax(axis=-1)
+
+        live.log_sklearn_plot("confusion_matrix", y_test, y_pred, name="cm.json")
+
+        df = pd.DataFrame({
+            'actual': y_test,
+            'predicted': y_pred,
+        })
+        os.makedirs("plots")
+        df.to_csv('plots/confusion.csv', index=False)
+        draw_confusion_matrix(y_test, y_pred)
 
 
 if __name__ == '__main__':
-    live = Live()
 
     args_parser = argparse.ArgumentParser()
     args_parser.add_argument('--config', dest='config', required=True)
