@@ -8,7 +8,7 @@ from dvclive.keras import DVCLiveCallback
 
 from util import load_params, read_dataset, create_image_matrix
 
-DATASET_FILE = "data/images.tar.gz"
+DATASET_FILE = "data/train-images-idx3-ubyte.gz"
 OUTPUT_DIR = "models"
 
 METRICS_FILE = "metrics.json"
