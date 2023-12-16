@@ -33,3 +33,80 @@ stages:
       md5: 959b84f35ac76a04a886d433e4d78300.dir
       size: 70715
       nfiles: 2
+  data_load:
+    cmd: python src/data_load.py --config=params.yaml
+    deps:
+    - path: src/data_load.py
+      hash: md5
+      md5: e08b713636f419d8c7eba50bba0df987
+      size: 776
+    params:
+      params.yaml:
+        base:
+          random_state: 42
+          log_level: INFO
+        data_load:
+          dataset_csv: data/raw/iris.csv
+    outs:
+    - path: data/raw/iris.csv
+      hash: md5
+      md5: 10f5f61b137fa708403ea5c480386bfe
+      size: 2908
+  featurize:
+    cmd: python src/featurize.py --config=params.yaml
+    deps:
+    - path: data/raw/iris.csv
+      hash: md5
+      md5: 10f5f61b137fa708403ea5c480386bfe
+      size: 2908
+    - path: src/featurize.py
+      hash: md5
+      md5: 4609c32a5b2637f2f241bd1c1a673bb0
+      size: 1167
+    params:
+      params.yaml:
+        base:
+          random_state: 42
+          log_level: INFO
+        data_load:
+          dataset_csv: data/raw/iris.csv
+        featurize:
+          features_path: data/processed/featured_iris.csv
+          target_column: target
+    outs:
+    - path: data/processed/featured_iris.csv
+      hash: md5
+      md5: aad458050d7f3348dfebb3b5626da5f4
+      size: 18215
+  data_split:
+    cmd: python src/data_split.py --config=params.yaml
+    deps:
+    - path: data/processed/featured_iris.csv
+      hash: md5
+      md5: aad458050d7f3348dfebb3b5626da5f4
+      size: 18215
+    - path: src/data_split.py
+      hash: md5
+      md5: 46495bcb8011ac25310f36e307f9687b
+      size: 1045
+    params:
+      params.yaml:
+        base:
+          random_state: 42
+          log_level: INFO
+        data_split:
+          test_size: 0.2
+          trainset_path: data/processed/train_iris.csv
+          testset_path: data/processed/test_iris.csv
+        featurize:
+          features_path: data/processed/featured_iris.csv
+          target_column: target
+    outs:
+    - path: data/processed/test_iris.csv
+      hash: md5
+      md5: d482f7a786a0f93694860de0dd172321
+      size: 3682
+    - path: data/processed/train_iris.csv
+      hash: md5
+      md5: 11c5594e4570b4de534fbc9a2cfa33b7
+      size: 14397
